@@ -1,0 +1,204 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+
+    <!-- ---- leaflet js ----  -->
+
+     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+   integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+   crossorigin=""/>
+     <!-- Make sure you put this AFTER Leaflet's CSS -->
+ <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+   integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+   crossorigin=""></script>
+
+
+
+
+    <title>RPD Challenge</title>
+
+
+    <style>
+        body{
+            overflow-x: hidden;
+            overflow-y: hidden;
+        }
+        #map { height: 91vh; }
+        table{
+          margin-left: 2px;
+        }
+    </style>
+
+
+  </head>
+  <body>
+
+    <!-- navbar starts  -->
+   <nav class="navbar navbar-light bg-light">
+  <div class="container-fluid">
+    <a class="navbar-brand">Flood Monitoring, Team MMT. Nepal</a>
+    <form class="d-flex">
+      <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+      <button class="btn btn-outline-success" type="submit">Search</button>
+    </form>
+  </div>
+</nav>
+
+<div class="row">
+    <div class="col-lg-3">
+            <div class="row">
+                <div class="col-lg-12">
+                    
+
+                     <table  border="1">
+                        <strong>EWS Message Will Be Here</strong>
+                     <tr border="1">
+                       <th>Country</th>
+                       <td>Nepal</td>
+                     </tr>
+                     <tr>
+                       <th>Disaster Type</th>
+                       <td>MET</td>
+                     </tr>
+                     <tr>
+                       <th>Disaster Sub-Type</th>
+                       <td>Flood</td>
+                     </tr>
+                     <tr>
+                       <th>GPS</th>
+                       <td>83.937411,28.2988512</td>
+                     </tr>
+                     <!-- {{ context.alert1info }} -->
+                   </table>
+
+
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                  <br>
+                  <br>
+                   
+                   <table  border="1">
+                     <b>Water Level Monitoring</b>
+                     <tr border="1">
+                       <th>Date</th>
+                       <td>{{ context.date1 }}</td>
+                     </tr>
+                     <tr>
+                       <th>Water Level</th>
+                       <td>{{ context.water_level }}</td>
+                     </tr>
+                     <tr>
+                       <th>Trend</th>
+                       <td>{{ context.trend }}</td>
+                     </tr>
+                     <tr>
+                       <th>Status</th>
+                       <td>{{ context.status }}</td>
+                     </tr>
+                     <tr>
+                       <th>Source</th>
+                       <td>www.hydrology.gov.np</td>
+                     </tr>
+                   </table>
+
+                   <audio id="siren">
+                     <source src="{% static 'siren.mp3' %}" type="audio/mpeg">
+                   </audio>
+                </div>
+            </div>
+    </div>
+    <div class="col-lg-9 map-page" id="map">
+           
+    </div>
+</div>
+
+
+<!-- navbar closes  -->
+    <!-- Optional JavaScript; choose one of the two! -->
+
+    <!-- Option 1: Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+
+    <!-- Option 2: Separate Popper and Bootstrap JS -->
+    <!--
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
+    -->
+  </body>
+</html>
+
+<script>
+    var map = L.map('map').setView([28.298851294135286,83.93741156516235], 14);
+    L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+    maxZoom: 18,
+    id: 'mapbox/streets-v11',
+    tileSize: 512,
+    zoomOffset: -1,
+    accessToken: 'pk.eyJ1IjoibG9zdGIxIiwiYSI6ImNqaTBjcGd4bjE2cGMza3M2MWEzcTRwd3gifQ.Ps6yKHol2bmEPndMSeYKKw'
+}).addTo(map);
+
+var LeafIcon = L.Icon.extend({
+    options: {
+       iconSize:     [40, 40],
+       shadowSize:   [50, 64],
+       iconAnchor:   [10, 30],
+       shadowAnchor: [4, 62],
+       popupAnchor:  [3, -40]
+    }
+});
+
+var alertIcon = new LeafIcon({
+  iconUrl : '{% static "bell.png" %}'
+  // iconUrl :'http://leafletjs.com/examples/custom-icons/leaf-green.png',
+    // iconUrl: 'http://geoneer.dineshbishwakarma.com.np/megaphone.png?i=1',
+    // shadowUrl: 'http://leafletjs.com/examples/custom-icons/leaf-shadow.png'
+})
+
+
+
+var CO_emission = L.tileLayer('{{ context.tile }} ', {
+                    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+                    maxZoom: 24,
+                }).addTo(map);
+
+                CO_emission.addTo(map);
+console.log('{{ tile }}');
+var baseMaps1 = {
+                    "OSM" :map,
+                };
+var RenderedMap = {
+    "Flood Inundation" :CO_emission,
+                };
+L.control.layers(baseMaps1, RenderedMap).addTo(map);
+
+var marker = L.marker([28.3, 83.94]).addTo(map);
+marker.bindPopup("<b>River Guage at GhaChowk</b><hr><p>Water Level : {{ context.water_level }}</p>");
+
+var alert1 = L.marker([28.292049525393825,83.93475081381958], {icon : alertIcon}).addTo(map);
+alert1.bindPopup("<button class='btn btn-danger' id='btnClikc' onclick='ringSiren()'>Ring Siren</button><br><button class='btn btn-success'  id='btnClikc' onclick='pauseSiren()'>Pause Siren</button>")
+var alert2 = L.marker([28.300060451957233,83.93303420005005], {icon : alertIcon}).addTo(map);
+alert2.bindPopup("<button class='btn btn-danger'  id='btnClikc' onclick='ringSiren()'>Ring Siren</button><br><button class='btn btn-success'  id='btnClikc' onclick='pauseSiren()'>Pause Siren</button>")
+var alert3 = L.marker([28.298851294135286,83.93741156516235], {icon : alertIcon}).addTo(map);
+alert3.bindPopup("<button class='btn btn-danger'  id='btnClikc' onclick='ringSiren()'>Ring Siren</button><br><button class='btn btn-success'  id='btnClikc' onclick='pauseSiren()'>Pause Siren</button>")
+
+var x = document.getElementById("siren");
+function ringSiren(){
+  x.play();  
+  x.loop = true;
+}
+
+function pauseSiren(){
+  x.pause();
+}
+</script>
